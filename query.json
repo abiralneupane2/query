@@ -1,0 +1,70 @@
+{
+    "datasets": [
+        {
+            "db": "localhost:3306",
+            "dbType": "mysql",
+            "table": "customers",
+            "id": "customers"
+        },
+        {
+            "db": "localhost:3306",
+            "dbType": "mysql",
+            "table": "orders",
+            "id": "orders"
+        }
+    ],
+    "columns": [
+        "order_id",
+        "customer_id",
+        "order_purchase_timestamp",
+        "order_approved_at"
+    ],
+    "filter": [
+        {
+            "dataset_id": "customers",
+            "col": "customer_state",
+            "operator": "in",
+            "param": {
+                "value": [
+                    "SP",
+                    "PR",
+                    "MG"
+                ]
+            }
+        },
+        {
+            "dataset_id": "orders",
+            "col": "order_approved_at",
+            "operator": "date_range",
+            "param": {
+                "start_value": 2017,
+                "end_value": 2018,
+                "selection_type": "year"
+            }
+        }
+    ],
+    "transformations": [
+        {
+            "dataset_id": "customers",
+            "col": "customer_city",
+            "operator": "substring",
+            "param": {
+                "start_position": 1,
+                "end_position": 5
+            }
+        },
+        {
+            "dataset_id": "customers",
+            "col": "customer_city",
+            "operator": "capitalize"
+        }
+    ],
+    "join": [
+        {
+            "left": "customers",
+            "right": "orders",
+            "left_on": "customer_id",
+            "right_on": "customer_id"
+        }
+    ]
+}
