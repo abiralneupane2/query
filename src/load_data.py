@@ -1,13 +1,17 @@
 import pandas as pd
 from sqlalchemy.orm import Session
 
-from schema import Order, Customer
-from create_db import engine
+from src.schema import Order, Customer
+from src.create_db import engine
 
 
 if __name__=="__main__":
-    orders_csv = pd.read_csv("olist_orders_dataset.csv")
-    customers_csv = pd.read_csv("olist_customers_dataset.csv")
+    """
+    Loads data to the empty db from csv files.
+    """
+
+    orders_csv = pd.read_csv("../olist_orders_dataset.csv")
+    customers_csv = pd.read_csv("../olist_customers_dataset.csv")
 
     orders = [Order(order_id, customer_id, order_purchase_timestamp, order_approved_at) \
         for order_id, customer_id, order_purchase_timestamp, order_approved_at in \
