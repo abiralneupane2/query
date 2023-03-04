@@ -57,7 +57,7 @@ class Query:
             params = f.get("param", None)
             if operator == "in":
                 self.q = self.q.filter(field.in_(params["value"]))
-            elif operator == "date_range":
+            if operator == "date_range":
                 start_value = params["start_value"]
                 end_value = params["end_value"]
                 self.q = self.q.filter(field.between(start_value,end_value))
@@ -68,15 +68,23 @@ class Query:
         function for transform operations
         """
         for t in transformations:
+            fns = []
             col = t["col"]
             table = self.get_table_from_dataset_id(t["dataset_id"])
             field = getattr(table, col)
             operator = t["operator"]
             params = t.get("param", None)
             if operator=="substring":
-                fn = func.substr(field, params["start_position"], params["end_position"])
-                self.q = self.q.select(fn)
-            
+                alias = f"{col}_substring"
+                fn = func.substr(field, params["start_position"], params["end_position"]).label(alias)
+                self.q = select(fn).select_from(self.q)
+            if operator=="capitalize":
+                alias = f"{col}_capitalize"
+                fn = func.upper(field).label(alias)
+                self.q = select(fn).select_from(self.q)
+
+
+
             
 
     def join(self, *joins):
@@ -105,14 +113,17 @@ class Query:
         if "filter" in self.q_specification:
             self.filter(*self.q_specification["filter"])
         
-        # if "transformations" in self.q_specification:
-        #     self.transform(*self.q_specification["transformations"])
+        if "transformations" in self.q_specification:
+            self.transform(*self.q_specification["transformations"])
 
 
  
     def execute(self, engine):
         with Session(engine) as session:
-            return session.execute(self.q)
+            result = session.execute(self.q)
+            # for row in result:
+            #     print(row)
+            return result
 
 
 

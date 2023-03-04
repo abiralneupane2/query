@@ -16,7 +16,8 @@
     "columns": [
         "order_id",
         "order_purchase_timestamp",
-        "order_approved_at"
+        "order_approved_at",
+        "customer_city"
     ],
     "filter": [
         {
