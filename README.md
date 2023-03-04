@@ -1,4 +1,4 @@
 # query
 
-pip install -r requirements.txt
-python3 run.py
+# pip install -r requirements.txt
+# python3 run.py
